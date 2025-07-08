@@ -5,11 +5,11 @@ class ContactBook:
     def __init__(self, root):
         self.root = root
         self.root.title("Contact Book")
-        self.root.geometry("400x400")
+        self.root.geometry("400x500")
 
         self.contacts = {}
 
-        # Labels and Entries
+        # Input Fields
         tk.Label(root, text="Name").pack()
         self.name_entry = tk.Entry(root)
         self.name_entry.pack()
@@ -22,13 +22,17 @@ class ContactBook:
         self.email_entry = tk.Entry(root)
         self.email_entry.pack()
 
+        tk.Label(root, text="Address").pack()
+        self.address_entry = tk.Entry(root)
+        self.address_entry.pack()
+
         # Buttons
         tk.Button(root, text="Add Contact", command=self.add_contact).pack(pady=5)
         tk.Button(root, text="View Contact", command=self.view_contact).pack(pady=5)
         tk.Button(root, text="Update Contact", command=self.update_contact).pack(pady=5)
         tk.Button(root, text="Delete Contact", command=self.delete_contact).pack(pady=5)
 
-        # Display area
+        # Display Area
         self.display = tk.Text(root, height=10, width=50)
         self.display.pack(pady=10)
 
@@ -36,10 +40,20 @@ class ContactBook:
         name = self.name_entry.get()
         phone = self.phone_entry.get()
         email = self.email_entry.get()
+        address = self.address_entry.get()
+
+        if not name or not phone or not email or not address:
+            messagebox.showerror("Error", "All fields are required.")
+            return
+
         if name in self.contacts:
             messagebox.showerror("Error", "Contact already exists.")
         else:
-            self.contacts[name] = {'phone': phone, 'email': email}
+            self.contacts[name] = {
+                'phone': phone,
+                'email': email,
+                'address': address
+            }
             messagebox.showinfo("Success", "Contact added.")
             self.clear_entries()
 
@@ -48,16 +62,26 @@ class ContactBook:
         if name in self.contacts:
             contact = self.contacts[name]
             self.display.delete('1.0', tk.END)
-            self.display.insert(tk.END, f"Name: {name}\nPhone: {contact['phone']}\nEmail: {contact['email']}")
+            self.display.insert(tk.END,
+                f"Name: {name}\n"
+                f"Phone: {contact['phone']}\n"
+                f"Email: {contact['email']}\n"
+                f"Address: {contact['address']}")
         else:
             messagebox.showerror("Error", "Contact not found.")
 
     def update_contact(self):
         name = self.name_entry.get()
+        phone = self.phone_entry.get()
+        email = self.email_entry.get()
+        address = self.address_entry.get()
+
         if name in self.contacts:
-            phone = self.phone_entry.get()
-            email = self.email_entry.get()
-            self.contacts[name] = {'phone': phone, 'email': email}
+            self.contacts[name] = {
+                'phone': phone,
+                'email': email,
+                'address': address
+            }
             messagebox.showinfo("Success", "Contact updated.")
             self.clear_entries()
         else:
@@ -77,6 +101,7 @@ class ContactBook:
         self.name_entry.delete(0, tk.END)
         self.phone_entry.delete(0, tk.END)
         self.email_entry.delete(0, tk.END)
+        self.address_entry.delete(0, tk.END)
 
 if __name__ == "__main__":
     root = tk.Tk()
